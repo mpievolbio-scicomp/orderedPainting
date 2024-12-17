@@ -2,8 +2,8 @@
 # definition for your grid engine
 #######################################################################################
 
-QUEUE_TYPE="SGE"
-QSUB_COMMON="qsub -cwd "
+# QUEUE_TYPE="SGE"
+# QSUB_COMMON="qsub -cwd "
 
 #QUEUE_TYPE="LSF"
 #QSUB_COMMON="bsub "
