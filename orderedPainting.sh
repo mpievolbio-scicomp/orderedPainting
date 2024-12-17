@@ -556,7 +556,8 @@ else
     EXEC_CMD="${EXE_PAINT} -i ${NUM_EM} -in -n 1 -a $ind $ind -j -g $PHASEFILE -r $RECOMB_FNANE -o ${OUT_DIR_linked1_est}/${out_prefix_ind}"
 
     TMP_SH="${STAMP}_ind${ind}_job.sh"
-    echo ${EXEC_CMD} > ${TMP_SH}
+    echo "#!/bin/bash" > ${TMP_SH}
+    echo ${EXEC_CMD} >> ${TMP_SH}
     chmod 755 ${TMP_SH}
 
     CMD=`returnQSUB_CMD ${STAMP}`
@@ -1258,7 +1259,8 @@ if [ "${SKIP_FLAG}" -eq 0 ]; then
   fi
 
   TMP_SH="${STAMP}_job.sh"
-  echo ${EXEC_CMD} > ${TMP_SH}
+  echo "#!/bin/bash" > ${TMP_SH}
+  echo ${EXEC_CMD} >> ${TMP_SH}
   chmod 755 ${TMP_SH}
 
   CMD=`returnQSUB_CMD ${STAMP}` 
