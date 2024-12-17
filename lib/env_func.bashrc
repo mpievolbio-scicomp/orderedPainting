@@ -9,8 +9,8 @@ QSUB_COMMON="qsub -cwd "
 #QSUB_COMMON="bsub "
 
 
-# QUEUE_TYPE="SLURM"
-# QSUB_COMMON="sbatch"
+QUEUE_TYPE="SLURM"
+QSUB_COMMON="qsub -cwd -l walltime=1:00:00 -q standard"
 #
 # If you need to increase an upper limit of memory usage,
 # please specify a correct option in your computational cluster.
