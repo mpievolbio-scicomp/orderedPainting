@@ -167,13 +167,12 @@ submit_calcAveDist_ordering() {
   fi
 
   TMP_SH="${STAMP}_n$1_job.sh"
-  echo ${EXEC_CMD} > ${TMP_SH}
+  echo "#!/bin/bash" > ${TMP_SH}
+  echo ${EXEC_CMD} >> ${TMP_SH}
   chmod 755 ${TMP_SH}
 
   CMD=`returnQSUB_CMD ${STAMP}`
-  #CMD=${CMD}" <<< '"
   CMD="${CMD} ./${TMP_SH}"
-  #CMD=${CMD}"'"
 
   echo ${CMD}
   eval ${CMD}
