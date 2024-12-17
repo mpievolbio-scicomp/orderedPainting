@@ -62,11 +62,14 @@ POS_MATRIXFILE=""
 if [ "${QUEUE_TYPE}" == "SGE" ]; then
   POS_MATRIXFILE=${array["SGE_TASK_ID"-1]}
 elif [ "${QUEUE_TYPE}" == "LSF" ]; then
-  POS_MATRIXFILE=${array["LSB_JOBINDEX"-1]}
+    POS_MATRIXFILE=${array["LSB_JOBINDEX"-1]}
+elif [ "${QUEUE_TYPE}" == "SLURM" ]; then
+    POS_MATRIXFILE=${array["SLURM_ARRAY_TASK_ID"-1]}
 else
   echo_fail "unknown QUEUE_TYPE: ${QUEUE_TYPE}"
 fi
 
+module load R
 CMD="R --vanilla --quiet < ${R_MAIN2} --args ${R_LIB} ${POS_MATRIXFILE} ${MIN} ${MAX} > /dev/null 2>&1"
 echo ${CMD}
 eval ${CMD}
