@@ -8,6 +8,9 @@ QSUB_COMMON="qsub -cwd "
 #QUEUE_TYPE="LSF"
 #QSUB_COMMON="bsub "
 
+
+# QUEUE_TYPE="SLURM"
+# QSUB_COMMON="sbatch"
 #
 # If you need to increase an upper limit of memory usage,
 # please specify a correct option in your computational cluster.
