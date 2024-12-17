@@ -7,6 +7,8 @@ usage () {
     echo "qsub -cwd  <<< '"
   elif [ "${QUEUE_TYPE}" == "LSF" ]; then
     echo "bsub -o logfile.txt <<< '"
+  elif [ "${QUEUE_TYPE}" == "SLURM" ]; then
+    echo "qsub -l walltime:01:00:00 -q standard -o logfile.txt $(basename $0)"
   else
     echo_fail "unknown QUEUE_TYPE: ${QUEUE_TYPE}"
   fi
@@ -126,16 +128,20 @@ returnQSUB_CMD() {
   if [ "${QUEUE_TYPE}" == "SGE" -o "${QUEUE_TYPE}" == "UGE" ]; then
     QSUB_CMD="${QSUB_COMMON} -o $1.log -e $1.log -N $1"
   elif [ "${QUEUE_TYPE}" == "LSF" ]; then
-    QSUB_CMD="${QSUB_COMMON} -o $1.log -e $1.log -J $1"
+      QSUB_CMD="${QSUB_COMMON} -o $1.log -e $1.log -J $1"
+  elif [ "${QUEUE_TYPE}" == "SLURM" ]; then
+      QSUB_CMD="${QSUB_COMMON} -l walltime=01:00:00 -q standard -o $1.log -e $1.log -J $1"
   fi
   
   if test "$2" = "" ; then
-    QSUB_CMD=${QSUB_CMD}
+      QSUB_CMD=${QSUB_CMD}
   else
-    if [ "${QUEUE_TYPE}" == "SGE" -o "${QUEUE_TYPE}" == "UGE" ]; then
-      QSUB_CMD="${QSUB_CMD} -t $2:$3"
-    elif [ "${QUEUE_TYPE}" == "LSF" ]; then
-      QSUB_CMD="${QSUB_CMD}[$2-$3]"
+      if [ "${QUEUE_TYPE}" == "SGE" -o "${QUEUE_TYPE}" == "UGE" ]; then
+          QSUB_CMD="${QSUB_CMD} -t $2:$3"
+      elif [ "${QUEUE_TYPE}" == "LSF" ]; then
+          QSUB_CMD="${QSUB_CMD}[$2-$3]"
+      elif [ "${QUEUE_TYPE}" == "SLURM" ]; then
+        QSUB_CMD="${QSUB_CMD}[$2-$3]"
     fi
   fi
   echo ${QSUB_CMD}
@@ -303,7 +309,7 @@ PNG_ALONG_SEQ=results_siteStats_along_seq.png
 #
 # check env
 #
-if [ "${QUEUE_TYPE}" == "SGE" -o "${QUEUE_TYPE}" == "UGE" ]; then
+if [ "${QUEUE_TYPE}" == "SGE" -o "${QUEUE_TYPE}" == "UGE" -o "${QUEUE_TYPE}" == "SLURM" ]; then
   CHECK=`which qsub`
   if [ "${CHECK}" == "" ]; then
     echo_fail "Error: qsub is not available"

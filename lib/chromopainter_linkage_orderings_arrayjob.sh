@@ -7,7 +7,7 @@
 . lib/env_func.bashrc
 
 usage () {
-  echo "qsub -cwd -t 1:NUM_HAP -S /bin/bash `basename $0` -r prefix_linked.rec -n prefix_linked.neest -l prefix_ordered_hap.list "
+  echo "qsub -cwd -l walltime=01:00:00 -q standard -t 1:NUM_HAP -S /bin/bash `basename $0` -r prefix_linked.rec -n prefix_linked.neest -l prefix_ordered_hap.list "
   exit 1
 }
 
@@ -50,6 +50,8 @@ if [ "${QUEUE_TYPE}" == "SGE" ]; then
   phasefile=${array["SGE_TASK_ID"-1]}
 elif [ "${QUEUE_TYPE}" == "LSF" ]; then
   phasefile=${array["LSB_JOBINDEX"-1]}
+elif [ "${QUEUE_TYPE}" == "SLURM" ]; then
+    phasefile=${array["SLURM_ARRAY_TASK_ID"-1]}
 else
   echo_fail "unknown QUEUE_TYPE: ${QUEUE_TYPE}"
 fi

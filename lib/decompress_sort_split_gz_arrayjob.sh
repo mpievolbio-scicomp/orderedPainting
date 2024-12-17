@@ -7,21 +7,21 @@
 . lib/env_func.bashrc
 
 usage () {
-  echo "qsub -cwd -t 1:NUM_GZ -S /bin/bash `basename $0` -l each_ordering_dir/target_gz.list "
-  exit 1
+    echo "qsub -cwd -l walltime=01:00:00 -q standard -t 1:NUM_GZ -S /bin/bash `basename $0` -l each_ordering_dir/target_gz.list "
+    exit 1
 }
 
 while getopts l: OPTION
 do
-  case $OPTION in
-    l)  if [ ! -z "${OPTARG}" ];then GZ_LIST=${OPTARG} ;else usage ;fi
-        ;;
-    \?) usage ;;
-  esac
+    case $OPTION in
+        l)  if [ ! -z "${OPTARG}" ];then GZ_LIST=${OPTARG} ;else usage ;fi
+               ;;
+               \?) usage ;;
+    esac
 done
 
 if [ $# -lt 2 ] ; then
-  usage
+    usage
 fi
 
 EXE_SPLITN=lib/splitN/sp
@@ -44,9 +44,11 @@ array=($(cat ${GZ_LIST}))
 gzfile=""
 
 if [ "${QUEUE_TYPE}" == "SGE" ]; then
-  gzfile=${array["SGE_TASK_ID"-1]}
+    gzfile=${array["SGE_TASK_ID"-1]}
 elif [ "${QUEUE_TYPE}" == "LSF" ]; then
-  gzfile=${array["LSB_JOBINDEX"-1]}
+    gzfile=${array["LSB_JOBINDEX"-1]}
+elif [ "${QUEUE_TYPE}" == "SLURM" ]; then
+  gzfile=${array["SLURM_ARRAY_TASK_ID"-1]}
 else
   echo_fail "unknown QUEUE_TYPE: ${QUEUE_TYPE}"
 fi

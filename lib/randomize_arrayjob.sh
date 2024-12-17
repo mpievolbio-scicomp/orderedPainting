@@ -7,12 +7,12 @@
 . lib/env_func.bashrc
 
 usage () {
-  echo "qsub -cwd -t 1:NUM_HAP -S /bin/bash `basename $0` "
+  echo "qsub -cwd -l walltime=01:00:00 -q standard -t 1:NUM_HAP -S /bin/bash `basename $0` "
   echo " -h file.hap "
   echo " -p outprefix "
   echo " -l strainName.list "
   echo " -o strainName_dispOrder.list "
-  echo " -t 1,...,10 (th ordering to be randoized, which is also used to run from the reverse) "
+  echo " -t 1,...,10 (th ordering to be randomized, which is also used to run from the reverse) "
   echo "(-i 1,...,n (if you don't array jobs))"
   echo " -s 1 (this value + counter of random ordering => seed of random number generator) "
 
@@ -53,6 +53,8 @@ if [ "${i_recipient}" == "" ]; then
     i_recipient=${SGE_TASK_ID}
   elif [ "${QUEUE_TYPE}" == "LSF" ]; then
     i_recipient=${LSB_JOBINDEX}
+  elif [ "${QUEUE_TYPE}" == "SLURM" ]; then
+      i_recipient=${SLURM_ARRAY_TASK_ID}
   else
     echo_fail "unknown QUEUE_TYPE: ${QUEUE_TYPE}"
   fi
