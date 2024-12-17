@@ -89,34 +89,34 @@ done
 #
 # 3. GNU sort 8.11
 #
-if [ ! -d "coreutils-8.11" ]; then
-  URL=http://ftp.gnu.org/gnu/coreutils/coreutils-8.11.tar.gz
-  wget ${URL}
-  if [ $? -ne 0 ]; then
-    echo_fail "Download failed.  Please check the URL: ${URL}"
-  fi
+# if [ ! -d "coreutils-8.11" ]; then
+#   URL=http://ftp.gnu.org/gnu/coreutils/coreutils-8.11.tar.gz
+#   wget ${URL}
+#   if [ $? -ne 0 ]; then
+#     echo_fail "Download failed.  Please check the URL: ${URL}"
+#   fi
 
-  tar xvfz coreutils-8.11.tar.gz
-  cd coreutils-8.11
-  CC=gcc
-  ./configure
-  cd ./lib
-  make
-  cd ../src
-  make version.h
-  make sort
-  if [ $? -ne 0 ]; then
-    echo_fail "Make of GNU sort failed"
-  fi
+#   tar xvfz coreutils-8.11.tar.gz
+#   cd coreutils-8.11
+#   CC=gcc
+#   ./configure
+#   cd ./lib
+#   make
+#   cd ../src
+#   make version.h
+#   make sort
+#   if [ $? -ne 0 ]; then
+#     echo_fail "Make of GNU sort failed"
+#   fi
 
-  CMD="cp sort ../../${LIB_DIR}/"
-  echo ${CMD}
-  eval ${CMD}
+#   CMD="cp sort ../../${LIB_DIR}/"
+#   echo ${CMD}
+#   eval ${CMD}
   
-  cd ../../
-else
-  echo "coreutils-8.11 already exists.  Skipped."
-fi
+#   cd ../../
+# else
+#   echo "coreutils-8.11 already exists.  Skipped."
+# fi
 
 
 #
