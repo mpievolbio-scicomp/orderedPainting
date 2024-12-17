@@ -130,7 +130,7 @@ returnQSUB_CMD() {
   elif [ "${QUEUE_TYPE}" == "LSF" ]; then
       QSUB_CMD="${QSUB_COMMON} -o $1.log -e $1.log -J $1"
   elif [ "${QUEUE_TYPE}" == "SLURM" ]; then
-      QSUB_CMD="${QSUB_COMMON} -l walltime=01:00:00 -q standard -o $1.log -e $1.log -J $1"
+      QSUB_CMD="${QSUB_COMMON} -o $1.log -e $1.log -N $1"
   fi
   
   if test "$2" = "" ; then
