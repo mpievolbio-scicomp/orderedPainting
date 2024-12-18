@@ -85,7 +85,7 @@ else
   
   for aa in `ls ${OUT_PREFIX}*.out` 
   do
-    CMD="/bin/rm -f $aa"
+    CMD="/bin/rm -vf $aa"
     echo ${CMD}
     eval ${CMD}
   done

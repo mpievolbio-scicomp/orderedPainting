@@ -10,7 +10,7 @@
 
 
 QUEUE_TYPE="SLURM"
-QSUB_COMMON="qsub -cwd -l walltime=1:00:00 -q standard"
+QSUB_COMMON="sbatch --time=24:00:00 --partition standard --workdir $PWD"
 #
 # If you need to increase an upper limit of memory usage,
 # please specify a correct option in your computational cluster.

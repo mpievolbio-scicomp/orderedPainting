@@ -130,7 +130,7 @@ returnQSUB_CMD() {
   elif [ "${QUEUE_TYPE}" == "LSF" ]; then
       QSUB_CMD="${QSUB_COMMON} -o $1.log -e $1.log -J $1"
   elif [ "${QUEUE_TYPE}" == "SLURM" ]; then
-      QSUB_CMD="${QSUB_COMMON} -o $1.log -e $1.log -N $1"
+      QSUB_CMD="${QSUB_COMMON} --output $1.log --error $1.log --job-name $1"
   fi
   
   if test "$2" = "" ; then
@@ -141,7 +141,7 @@ returnQSUB_CMD() {
       elif [ "${QUEUE_TYPE}" == "LSF" ]; then
           QSUB_CMD="${QSUB_CMD}[$2-$3]"
       elif [ "${QUEUE_TYPE}" == "SLURM" ]; then
-        QSUB_CMD="${QSUB_CMD}[$2-$3]"
+        QSUB_CMD="${QSUB_CMD} --array $2-$3"
     fi
   fi
   echo ${QSUB_CMD}
@@ -318,6 +318,11 @@ elif [ "${QUEUE_TYPE}" == "LSF" ]; then
   if [ "${CHECK}" == "" ]; then
     echo_fail "Error: bsub is not available"
   fi
+elif [ "${QUEUE_TYPE}" == "SLURM" ]; then
+  CHECK=`which srun`
+  if [ "${CHECK}" == "" ]; then
+    echo_fail "Error: srun is not available"
+  fi
 fi
 
 if [ ! -d "${LOG_DIR}" ]; then
@@ -462,6 +467,8 @@ if [ "${MISSING_POS_IND_FILE}" != "" ]; then
   fi
 fi
 
+echo "All checks passed, preparing for run."
+
 #
 # prepare
 #
@@ -476,8 +483,13 @@ ORDER_STRAIN_LIST=${OUT_PREFIX_BASE}_orderedS${SEED}_rnd_1_${TYPE_NUM_ORDERING}_
 
 #declare -a arr_STAMP
 
+echo "******************** DIR***********************"
+echo $PWD
 cwd=`dirname $0` 
+echo $cwd
 cd $cwd
+echo $PWD
+echo "******************** DIR***********************"
 
 perl -i -pe 's/\r//g' ${PHASEFILE}
 perl -i -pe 's/ $//g' ${PHASEFILE}
@@ -561,9 +573,7 @@ else
     chmod 755 ${TMP_SH}
 
     CMD=`returnQSUB_CMD ${STAMP}`
-    #CMD=${CMD}" <<< '"
     CMD="${CMD} ./${TMP_SH}"
-    #CMD=${CMD}"'"
     echo ${CMD}
     eval ${CMD}
     if [ $? -ne 0 ]; then 
@@ -588,7 +598,6 @@ else
   done
   CMD="${PL_ESTIMATE_Ne} -o ${N_e_FNAME} ${OUT_DIR_linked1_est}/${OUT_PREFIX_BASE}*.EMprobs.out "
   echo "executing ${PL_ESTIMATE_Ne} -o ${N_e_FNAME} ${OUT_DIR_linked1_est}/${OUT_PREFIX_BASE}*.EMprobs.out ... "
-  #echo ${CMD}
   eval ${CMD}
   if [ $? -ne 0 ]; then 
     echo_fail "Execution error: ${CMD} (step${STEP}_2) "
@@ -738,7 +747,7 @@ EOF
 
   chmod 755 ${QSUB_FILE}
   CMD=`returnQSUB_CMD ${STAMP} `
-  CMD=${CMD}" ./${QSUB_FILE}" # " <<< /bin/bash " doesn't work in LSF
+  CMD=${CMD}" ./${QSUB_FILE}" 
 
   #
   # submit
@@ -841,14 +850,9 @@ move_log_files "${STAMP}"
 STEP=3
 
 get_stamp ${STEP}
-#arr_STAMP=("${arr_STAMP[@]}" "${STAMP}")
 disp_punctuate ${STEP} ${STAMP}
 
 TARGET_HAP_FNANE="target_hap.list"
-
-#NUM_HAP=`head -2 ${PHASEFILE} | tail -1`
-#NUM_SITE=`head -3 ${PHASEFILE} | tail -1`
-#let NUM_ROW_COPYPROB=${NUM_SITE}+2
 
 while read EACH_DIR
 do
@@ -921,7 +925,7 @@ do
       CMD=${CMD}"  -l ${TARGET_HAP_LIST}"
 
       echo ${CMD}
-      QSUB_MSG=`${CMD}`
+      eval ${CMD}
       if [ $? -ne 0 ]; then 
         echo_fail "Execution error: ${CMD} (step${STEP}) "
       fi
@@ -932,7 +936,6 @@ do
 done < ${ORDER_DIR_LIST}
 
 wait_until_finish "${STAMP}"
-
 
 echo "checking whether there is any incomplete output file (.copyprobsperlocus.out.gz) of the step${STEP} ..."
 
