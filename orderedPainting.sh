@@ -190,13 +190,12 @@ wait_until_finish() {
       echo "All tasks in step $1 are complete."
       break
     fi
-    echo "Waiting for ${END_CHECK} tasks to complete. Sleeping for 3 seconds."
-    sleep 1
-    echo -n "1 "
-    sleep 1
-    echo -n "2 "
-    sleep 1
-    echo -n "3"
+    echo "Waiting for ${END_CHECK} tasks to complete. Sleeping for 30 seconds."
+    for w in {1..30}; do
+        sleep 1
+        echo -n "$w "
+        done
+    echo ""
   done
 }
 
