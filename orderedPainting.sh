@@ -184,12 +184,19 @@ submit_calcAveDist_ordering() {
 wait_until_finish() {
   while :
   do
-    QSTAT_CMD=qstat
-    END_CHECK=`${QSTAT_CMD} | grep -e $1 -e 'not ready yet' | wc -l`
+    QSTAT_CMD=squeue -u $USER -t RUNNING -t PENDING
+    END_CHECK=`${QSTAT_CMD} | grep -e $1 | wc -l`
     if [ "${END_CHECK}" -eq 0 ]; then
+      echo "All tasks in step $1 are complete."
       break
     fi
-    sleep 3
+    echo "Waiting for ${END_CHECK} tasks to complete. Sleeping for 3 seconds."
+    sleep 1
+    echo -n "1 "
+    sleep 1
+    echo -n "2 "
+    sleep 1
+    echo -n "3"
   done
 }
 
@@ -481,15 +488,8 @@ ORDER_HAP_LIST=${OUT_PREFIX_BASE}_orderedS${SEED}_hap.list
 ORDER_DIR_LIST=${OUT_PREFIX_BASE}_orderedS${SEED}_rnd_1_${TYPE_NUM_ORDERING}_dirs.list
 ORDER_STRAIN_LIST=${OUT_PREFIX_BASE}_orderedS${SEED}_rnd_1_${TYPE_NUM_ORDERING}_dirs_strainOrder.list
 
-#declare -a arr_STAMP
-
-echo "******************** DIR***********************"
-echo $PWD
 cwd=`dirname $0` 
-echo $cwd
 cd $cwd
-echo $PWD
-echo "******************** DIR***********************"
 
 perl -i -pe 's/\r//g' ${PHASEFILE}
 perl -i -pe 's/ $//g' ${PHASEFILE}
@@ -580,15 +580,19 @@ else
       echo_fail "Execution error: ${CMD} (step${STEP}_1) "
     fi
   done
-
+echo "Done with batch job submission."
   OUT_DIR=${OUT_DIR_linked1_est}
+
+  echo "Waiting for jobs to complete."
   wait_until_finish "${STAMP}"
 
   # remove unnecessary files
-  ls ${OUT_DIR_linked1_est}/${OUT_PREFIX_BASE}*.out | grep -v EMprobs | xargs rm
-  ls ${OUT_DIR_linked1_est}/${OUT_PREFIX_BASE}*.copyprobsperlocus.out.gz | xargs rm
+  echo "Removing temporary files."
+  ls ${OUT_DIR_linked1_est}/${OUT_PREFIX_BASE}*.out | grep -v EMprobs | xargs rm -v
+  ls ${OUT_DIR_linked1_est}/${OUT_PREFIX_BASE}*.copyprobsperlocus.out.gz | xargs rm -v
 
   # summarize *.EMprobs.out files and estimate Ne
+  echo "Checking for unconverged files."
   let WC_CONVERGED=${NUM_EM}+2
   for aa in `wc -l ${OUT_DIR_linked1_est}/${OUT_PREFIX_BASE}*.EMprobs.out | grep -v " ${WC_CONVERGED} " | grep -v total | awk '{print $2}'`
   do
@@ -614,6 +618,7 @@ fi
 
 move_log_files "${STAMP}"
 
+echo "Done with ${STAMP}."
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # prepare ordered *.hap files 
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -1108,7 +1113,7 @@ wait_until_finish "${STAMP}"
 #      no dir is submitted here 
 #      because arr_dirs_for_msort is already empty
 #
-submit_msort_each_ordering "${STAMP}"
+# submit_msort_each_ordering "${STAMP}"
 #
 # wait until the submitted msort jobs are finished
 #
