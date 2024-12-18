@@ -184,7 +184,7 @@ submit_calcAveDist_ordering() {
 wait_until_finish() {
   while :
   do
-    QSTAT_CMD=squeue -u $USER -t RUNNING -t PENDING
+    QSTAT_CMD="squeue"
     END_CHECK=`${QSTAT_CMD} | grep -e $1 | wc -l`
     if [ "${END_CHECK}" -eq 0 ]; then
       echo "All tasks in step $1 are complete."
