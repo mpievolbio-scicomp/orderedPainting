@@ -187,7 +187,6 @@ wait_until_finish() {
     QSTAT_CMD="squeue -u ${USER} -o \"%.32j\""
     END_CHECK=`${QSTAT_CMD} | grep -e $1 | wc -l`
     if [ "${END_CHECK}" -eq 0 ]; then
-      echo "All jobs in step$STEP are complete."
       break
     fi
     echo "Waiting for ${END_CHECK} jobs to complete. Sleeping for 10 seconds."
