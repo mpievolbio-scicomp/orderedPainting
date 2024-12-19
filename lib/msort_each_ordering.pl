@@ -54,9 +54,9 @@ my $gz_cat_copyprob_each_dir = "copyprobsperlocus.cat.gz";
 my $arrayJobID = "";
 if (defined($ENV{LSB_JOBINDEX})) {
   $arrayJobID = $ENV{LSB_JOBINDEX};
-} elsif ($ENV{SGE_TASK_ID} ne "") {
+} elsif (defined($ENV{SGE_TASK_ID})) {
   $arrayJobID = $ENV{SGE_TASK_ID};
-} elsif ($ENV{SLURM_ARRAY_TASK_ID} ne "") {
+} elsif (defined($ENV{SLURM_ARRAY_TASK_ID})) {
     $arrayJobID = $ENV{SLURM_ARRAY_TASK_ID};
 }
 
