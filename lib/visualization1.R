@@ -6,7 +6,7 @@ library(MASS)
 c_args <- commandArgs(trailingOnly=T)
 
 
-source(lib/plotHeatmap.R)
+source('lib/plotHeatmap.R')
 
 ###################################################
 
