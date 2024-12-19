@@ -220,6 +220,9 @@ if ($QUEUE_TYPE eq "SGE") {
   $QSUB = "qsub -S /bin/bash -cwd -N "; # "-S /bin/bash" is required in SGE
 } elsif ($QUEUE_TYPE eq "LSF") {
   $QSUB = "bsub -J ";
+} elsif ($QUEUE_TYPE eq "SLURM") {
+    $QSUB = "sbatch --job-name ";
+    $QSTAT = "squeue -u $USER -o \"%.32j\""
 } else {
   die "Error: uknown QUEUE_TYPE $QUEUE_TYPE";
 }
@@ -354,15 +357,12 @@ if (!$opt_r) {
 
         if ($nrow_divided_sum_file != scalar(@arr_ind_outDispOrdering)+1) {
 
-          $cmd_ppGz  = "";
-          #$cmd_ppGz  = "gzip -dc $dir_each_ordering/$gz_cat_copyprob_each_dir |";
-          #$cmd_ppGz  = "zcat $dir_each_ordering/$gz_cat_copyprob_each_dir.?? |";
+          $cmd_ppGz  = "#! /bin/bash\n\n";
           $cmd_ppGz .= $cmd_ppGz_common;
           $cmd_ppGz .= " -i $each_gz_cat_copyprob ";
           $cmd_ppGz .= " -s $suffix";
           $cmd_ppGz .= " -p $loop_part";
-          # no "-c" here
-          
+
           $stamp =~ s/://g;
           my $tmp_sh = $each_gz_cat_copyprob . "_$stamp.sh";
           open(TMP_SH, "> $tmp_sh");
@@ -372,13 +372,11 @@ if (!$opt_r) {
 
           while () {
             sleep 3;
-            
             if (-f $tmp_sh) {
               last;
             }
           }
 
-          #$cmd = "$QSUB $p1_job_name -e $p1_job_name.log -o $p1_job_name.log <<< '$cmd_ppGz '";
           $cmd = "$QSUB $p1_job_name -e $p1_job_name.log -o $p1_job_name.log ./$tmp_sh";
           print("$cmd\n");
           if( system("$cmd") != 0) { die("Error: $cmd failed"); };
@@ -389,10 +387,8 @@ if (!$opt_r) {
           if ($check > $MAX_PARALLEL) {
             while () {
               sleep 10;
-              
               $check = `$QSTAT | grep $p1_job_name | wc -l`;
               chomp($check);
-              
               if ($check < $MAX_PARALLEL) {
                 last;
               }
@@ -408,9 +404,8 @@ if (!$opt_r) {
 
       while () {
         my $check = `$QSTAT | grep $p1_job_name | wc -l`;
-        #print "$check";
         chomp($check);
-        
+
         if ($check == 0) {
           my @arr_outfiles = glob("$dir_each_ordering/$out_each_dir_sum.??");
           if (scalar(@arr_outfiles) == $PARALLEL_PER_ORDERING) {
@@ -506,8 +501,7 @@ if (!$opt_r) {
         my $suffix = $each_gz_cat_copyprob;
            $suffix =~ s/^.*(\.[a-z0-9]{2})$/$1/g;
 
-        #$cmd_ppGz  = "gzip -dc $each_gz_cat_copyprob |";
-        $cmd_ppGz  = "";
+        $cmd_ppGz  = "#! /bin/bash\n\n";
         $cmd_ppGz .= $cmd_ppGz_common;
         $cmd_ppGz .= " -i $each_gz_cat_copyprob ";
         $cmd_ppGz .= " -s $suffix";
@@ -531,7 +525,6 @@ if (!$opt_r) {
           }
         }
 
-        #$cmd = "$QSUB $p2_job_name -e $p2_job_name.log -o $p2_job_name.log <<< '$cmd_ppGz '";
         $cmd = "$QSUB $p2_job_name -e $p2_job_name.log -o $p2_job_name.log ./$tmp_sh";
         print("$cmd\n");
         if( system("$cmd") != 0) { die("Error: $cmd failed"); };
@@ -968,8 +961,7 @@ if ($opt_n) {
             my $suffix = $each_gz_cat_copyprob;
                $suffix =~ s/^.*(\.[a-z0-9]{2})$/$1/g;
 
-            #$cmd_ppGz  = "gzip -dc $each_gz_cat_copyprob | "; 
-            $cmd_ppGz  = "";
+            $cmd_ppGz  = "#!/bin/bash\n\n";
             $cmd_ppGz .= " $postprocess_path ";
 
             $cmd_ppGz .= " -d $dir_each_ordering ";
@@ -1003,7 +995,6 @@ if ($opt_n) {
               }
             }
 
-            #$cmd = "$QSUB $p3_job_name -e $p3_job_name.log -o $p3_job_name.log <<< '$cmd_ppGz '";
             $cmd = "$QSUB $p3_job_name -e $p3_job_name.log -o $p3_job_name.log ./$tmp_sh";
             print("$cmd\n");
             if( system("$cmd") != 0) { die("Error: $cmd failed"); };
@@ -1037,7 +1028,7 @@ if ($opt_n) {
         my @arr_outfiles = glob("$dir_each_ordering/$out_each_dir_site_minus_average_matrix_summary.??");
         if (scalar(@arr_outfiles) == $PARALLEL_PER_ORDERING) {
           if (! -s "$dir_each_ordering/$out_each_dir_site_minus_average_matrix_summary") {
-            my $cmd_sort_within_each_ordering  = "/bin/sort -n $dir_each_ordering/$out_each_dir_site_minus_average_matrix_summary.?? ";
+            my $cmd_sort_within_each_ordering  = "#!/bin/bash\n\n/bin/sort -n $dir_each_ordering/$out_each_dir_site_minus_average_matrix_summary.?? ";
                $cmd_sort_within_each_ordering .= " > $dir_each_ordering/$out_each_dir_site_minus_average_matrix_summary";
 
             $stamp =~ s/://g;
@@ -1055,7 +1046,6 @@ if ($opt_n) {
               }
             }
 
-            #$cmd = "$QSUB $p3_job_name -e $p3_job_name.log -o $p3_job_name.log <<< '$cmd_sort_within_each_ordering'";
             $cmd = "$QSUB $p3_job_name -e $p3_job_name.log -o $p3_job_name.log ./$tmp_sh";
             print("$cmd\n");
             if( system("$cmd") != 0) { die("Error: $cmd failed"); };
