@@ -70,7 +70,7 @@ else
 fi
 
 module load R
-CMD="R --vanilla --quiet < ${R_MAIN2} --args ${R_LIB} ${POS_MATRIXFILE} ${MIN} ${MAX} > /dev/null 2>&1"
+CMD="Rscript ${R_MAIN2} ${POS_MATRIXFILE} ${MIN} ${MAX} > /dev/null 2>&1"
 echo ${CMD}
 eval ${CMD}
 

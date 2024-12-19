@@ -4,25 +4,22 @@
 library(MASS)
 
 c_args <- commandArgs(trailingOnly=T)
-if (length(c_args) < 4) {
-  stop("Error: num of command line args must be >= 4")
-}
 
-source(c_args[1])
+source('lib/plotHeatmap.R')
 
 ###################################################
 
-pos_matrixFile <- c_args[2]
+pos_matrixFile <- c_args[1]
 if (!file.exists(pos_matrixFile)) {
   stop(sprintf("Error: %s doesn't exist", pos_matrixFile))
 }
 
-min_among_sites <- as.numeric(c_args[3])
-max_among_sites <- as.numeric(c_args[4])
+min_among_sites <- as.numeric(c_args[2])
+max_among_sites <- as.numeric(c_args[3])
 
 visual_orderFile <- ""
-if (length(c_args) > 4) {
-  visual_orderFile <- c_args[5]
+if (length(c_args) > 3) {
+  visual_orderFile <- c_args[4]
 }
 
 
