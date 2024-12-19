@@ -194,7 +194,7 @@ if ($arrayJobID > 0) {
       
       $cmd  = "$sort_path $sort_opt ";
       $cmd .= " -T $dir_each_ordering $dir_each_ordering/*.copyprobsperlocus.out_$each_suffix";
-      $cmd .= " | gzip -c >> $dir_each_ordering/$gz_cat_copyprob_each_dir";
+      $cmd .= " | gzip - >> $dir_each_ordering/$gz_cat_copyprob_each_dir";
       print "$cmd\n";
       if( system("$cmd") != 0) { die("Error: $cmd failed"); };
 

@@ -91,7 +91,7 @@ if [ $? -ne 0 ]; then
   echo_fail "Error: ${CMD} "
 fi
 
-CMD="/bin/rm ${each_copyprobsperlocus}"
+CMD="/bin/rm -v ${each_copyprobsperlocus}"
 echo ${CMD}
 eval ${CMD}
 if [ $? -ne 0 ]; then 
@@ -105,7 +105,7 @@ if [ $? -ne 0 ]; then
   echo_fail "Error: ${CMD} "
 fi
 
-CMD="/bin/rm -f ${each_copyprobsperlocus}.sort";
+CMD="/bin/rm -fv ${each_copyprobsperlocus}.sort";
 echo ${CMD}
 eval ${CMD}
 if [ $? -ne 0 ]; then 
@@ -116,7 +116,7 @@ fi
 #
 # remove the input file
 #
-CMD="/bin/rm -f $gzfile";
+CMD="/bin/rm -vf $gzfile";
 echo ${CMD}
 eval ${CMD}
 if [ $? -ne 0 ]; then 
