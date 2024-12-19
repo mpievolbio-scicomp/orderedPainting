@@ -153,11 +153,7 @@ submit_calcAveDist_ordering() {
   EXEC_CMD=${EXEC_CMD}" -g ${PHASEFILE} "
   EXEC_CMD=${EXEC_CMD}" -d ${ORDER_DIR_LIST} "
   EXEC_CMD=${EXEC_CMD}" -l ${ORDER_STRAIN_LIST} "
-  #if [ "${CONTRAST_MAX}" -gt 0 ]; then
-  #  EXEC_CMD=${EXEC_CMD}" -c ${CONTRAST_MAX} " 
-  #fi
   EXEC_CMD=${EXEC_CMD}" -s ${HAP_LIST_OUTDISP} "
-  #EXEC_CMD=${EXEC_CMD}" -n ${i_ordering}"
   EXEC_CMD=${EXEC_CMD}" -n $1"
   if [ "${MISSING_POS_IND_FILE}" != "" ]; then
     EXEC_CMD=${EXEC_CMD}" -m ${MISSING_POS_IND_FILE}"

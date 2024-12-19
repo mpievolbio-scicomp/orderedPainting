@@ -85,7 +85,7 @@ my $PARALLEL_PER_ORDERING = 9;
 #
 # maximum number of parallelization executed at the same time 
 #
-my $MAX_PARALLEL = 200;
+my $MAX_PARALLEL = 10;
 
 #
 # number of sites in sum_site_minus_average.summary.txt and for visualization
@@ -357,7 +357,7 @@ if (!$opt_r) {
 
         if ($nrow_divided_sum_file != scalar(@arr_ind_outDispOrdering)+1) {
 
-          $cmd_ppGz  = "#! /bin/bash\n\n";
+          $cmd_ppGz  = "#!/bin/bash\n\n";
           $cmd_ppGz .= $cmd_ppGz_common;
           $cmd_ppGz .= " -i $each_gz_cat_copyprob ";
           $cmd_ppGz .= " -s $suffix";
@@ -501,7 +501,7 @@ if (!$opt_r) {
         my $suffix = $each_gz_cat_copyprob;
            $suffix =~ s/^.*(\.[a-z0-9]{2})$/$1/g;
 
-        $cmd_ppGz  = "#! /bin/bash\n\n";
+        $cmd_ppGz  = "#!/bin/bash\n\n";
         $cmd_ppGz .= $cmd_ppGz_common;
         $cmd_ppGz .= " -i $each_gz_cat_copyprob ";
         $cmd_ppGz .= " -s $suffix";
@@ -552,6 +552,7 @@ if (!$opt_r) {
         chomp($check);
         
         if ($check == 0) {
+          print("Concat distScore files")
           my @arr_outfiles = glob("$dir_each_ordering/$out_each_dir_site_distScore.??");
           if (scalar(@arr_outfiles) == $PARALLEL_PER_ORDERING) {
             $cmd = "/bin/cat $dir_each_ordering/$out_each_dir_site_distScore.?? > $dir_each_ordering/$out_each_dir_site_distScore";
