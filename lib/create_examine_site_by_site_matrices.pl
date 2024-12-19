@@ -221,7 +221,7 @@ if ($QUEUE_TYPE eq "SGE") {
 } elsif ($QUEUE_TYPE eq "LSF") {
   $QSUB = "bsub -J ";
 } elsif ($QUEUE_TYPE eq "SLURM") {
-    $QSUB = "sbatch --time 1:00:00 --job-name ";
+    $QSUB = "sbatch --partition global --time 1:00:00 --job-name ";
     $QSTAT = "squeue -o \"%.32j\""
 } else {
   die "Error: uknown QUEUE_TYPE $QUEUE_TYPE";

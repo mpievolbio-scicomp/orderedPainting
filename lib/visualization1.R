@@ -4,15 +4,13 @@
 library(MASS)
 
 c_args <- commandArgs(trailingOnly=T)
-if (length(c_args) != 2) {
-  stop("Error: num of command line args must be 2")
-}
 
-source(c_args[1])
+
+source(lib/plotHeatmap.R)
 
 ###################################################
 
-gzfile_site_dist <- c_args[2]
+gzfile_site_dist <- c_args[1]
 if (!file.exists(gzfile_site_dist)) {
   stop(sprintf("Error: %s doesn't exist"))
 }

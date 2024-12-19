@@ -1328,14 +1328,13 @@ move_log_files "${STAMP}"
 STEP=7
 
 get_stamp ${STEP}
-#arr_STAMP=("${arr_STAMP[@]}" "${STAMP}")
 disp_punctuate ${STEP} ${STAMP}
 
 #
 # basic plot (histgram & along the sequemce) of all sites
 #
 if [ ! -s "${COMBINED_RES_DIR}/${PNG_HIST}" -o ! -s "${COMBINED_RES_DIR}/${PNG_ALONG_SEQ}" ]; then
-  CMD="R --vanilla --quiet < ${R_MAIN1} --args ${R_LIB_HEATMAP} ${COMBINED_RES_DIR}/${OUTF_SITE_STATS} > /dev/null 2>&1"
+  CMD="R --vanilla --quiet < ${R_MAIN1} --args ${R_LIB_HEATMAP} ${COMBINED_RES_DIR}/${OUTF_SITE_STATS}"
   echo ${CMD}
   eval ${CMD}
   if [ $? -ne 0 ]; then 
@@ -1350,7 +1349,7 @@ fi
 # plot relation between missing count per site and the distance statistic
 #
 if [ "${MISSING_POS_IND_FILE}" != "" ]; then
-  CMD="R --vanilla --quiet < ${R_CHECK_MISSING_STAT} --args ${MISSING_POS_IND_FILE}  ${COMBINED_RES_DIR}/${OUTF_SITE_STATS} > /dev/null 2>&1"
+  CMD="R --vanilla --quiet < ${R_CHECK_MISSING_STAT} --args ${MISSING_POS_IND_FILE}  ${COMBINED_RES_DIR}/${OUTF_SITE_STATS}"
   echo ${CMD}
   eval ${CMD}
   if [ $? -ne 0 ]; then 
@@ -1386,11 +1385,9 @@ if [ "${OUTPUT_REPRESENTATIVES}" == "TRUE" ]; then
       CMD=${CMD}"  -l ${VISUALIZE_TYPE_DIR}.list"
    
       echo ${CMD}
-      #QSUB_MSG=`${CMD}`
       if [ $? -ne 0 ]; then 
         echo_fail "Execution error: ${CMD} (step${STEP}, ${SH_R_MAIN2}) "
       fi
-      #QSUB_ID=`echo ${QSUB_MSG} | perl -pe 's/ \(.*$//g' | perl -pe 's/^.* //g' | perl -pe 's/\..*$//g'`
     else
       echo_fail "Error: ${VISUALIZE_TYPE_DIR} doesn't exist"
     fi
