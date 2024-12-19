@@ -12,7 +12,7 @@ source('lib/plotHeatmap.R')
 
 gzfile_site_dist <- c_args[1]
 if (!file.exists(gzfile_site_dist)) {
-  stop(sprintf("Error: %s doesn't exist"))
+  stop(sprintf("Error: %s doesn't exist", gzfile_site_dist))
 }
 
 d_site_dist <- read.table(gzfile(gzfile_site_dist),header=T)
