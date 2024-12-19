@@ -56,6 +56,8 @@ if (defined($ENV{LSB_JOBINDEX})) {
   $arrayJobID = $ENV{LSB_JOBINDEX};
 } elsif ($ENV{SGE_TASK_ID} ne "") {
   $arrayJobID = $ENV{SGE_TASK_ID};
+} elsif ($ENV{SLURM_ARRAY_TASK_ID} ne "") {
+    $arrayJobID = $ENV{SLURM_ARRAY_TASK_ID};
 }
 
 #
@@ -121,7 +123,6 @@ if ($arrayJobID > 0) {
   #
   $cmd  = "$sort_path $sort_opt ";
   $cmd .= " -T $dir_each_ordering $dir_each_ordering/*.copyprobsperlocus.out_$each_suffix";
-  #$cmd .= " | gzip > $dir_each_ordering/$gz_cat_copyprob_each_dir.$each_suffix"; # split gz files
   $cmd .= "       > $dir_each_ordering/$gz_cat_copyprob_each_dir.$each_suffix"; # split gz files
   print "$cmd\n";
   if( system("$cmd") != 0) { die("Error: $cmd failed"); };
@@ -130,7 +131,7 @@ if ($arrayJobID > 0) {
   print "$cmd\n";
   if( system("$cmd") != 0) { die("Error: $cmd failed"); };
 
-  $cmd  = "/bin/mv  $dir_each_ordering/$gz_cat_copyprob_each_dir.$each_suffix.gz";
+  $cmd  = "/bin/mv -v  $dir_each_ordering/$gz_cat_copyprob_each_dir.$each_suffix.gz";
   $cmd .= "         $dir_each_ordering/$gz_cat_copyprob_each_dir.$each_suffix";
   print "$cmd\n";
   if( system("$cmd") != 0) { die("Error: $cmd failed"); };
@@ -139,7 +140,7 @@ if ($arrayJobID > 0) {
   # remove the uncompressed files required for msort
   #    which can be large for a large dataset
   #
-  $cmd = "/bin/rm $dir_each_ordering/*.copyprobsperlocus.out_$each_suffix";
+  $cmd = "/bin/rm -v $dir_each_ordering/*.copyprobsperlocus.out_$each_suffix";
   print "$cmd\n";
   if( system("$cmd") != 0) { die("Error: $cmd failed"); };
 
