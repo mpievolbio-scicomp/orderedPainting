@@ -552,7 +552,7 @@ if (!$opt_r) {
         chomp($check);
         
         if ($check == 0) {
-          print("Concat distScore files")
+            print("Concat distScore files");
           my @arr_outfiles = glob("$dir_each_ordering/$out_each_dir_site_distScore.??");
           if (scalar(@arr_outfiles) == $PARALLEL_PER_ORDERING) {
             $cmd = "/bin/cat $dir_each_ordering/$out_each_dir_site_distScore.?? > $dir_each_ordering/$out_each_dir_site_distScore";
