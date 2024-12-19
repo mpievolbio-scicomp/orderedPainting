@@ -222,7 +222,7 @@ if ($QUEUE_TYPE eq "SGE") {
   $QSUB = "bsub -J ";
 } elsif ($QUEUE_TYPE eq "SLURM") {
     $QSUB = "sbatch --job-name ";
-    $QSTAT = "squeue -u $USER -o \"%.32j\""
+    $QSTAT = "squeue -o \"%.32j\""
 } else {
   die "Error: uknown QUEUE_TYPE $QUEUE_TYPE";
 }
